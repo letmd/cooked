@@ -1,0 +1,95 @@
+@use 'sass:map';
+@use 'sass:list';
+
+// Крок "зниження" верхньої межі
+$breakpoint-interval: 0.02 !default;
+
+// Карта брейкпоінтів (можна перевизначити ДО підключення)
+$grid-breakpoints: (
+  xs: 375px,
+  sm: 768px,
+  md: 1024px,
+  lg: 1280px,
+  xl: 1600px,
+  xxl: 1920px
+) !default;
+
+// ---- Helpers ----
+@function breakpoint-next($name, $breakpoints: $grid-breakpoints, $keys: map.keys($breakpoints)) {
+  $index: list.index($keys, $name);
+
+  @if not $index {
+    @error "breakpoint-next: `#{$name}` is not a valid breakpoint name.";
+  }
+
+  @return if($index < list.length($keys), list.nth($keys, $index + 1), null);
+}
+
+@function breakpoint-min($name, $breakpoints: $grid-breakpoints) {
+  $min: map.get($breakpoints, $name);
+
+  @if not $min {
+    @error "breakpoint-min: `#{$name}` is not a valid breakpoint name.";
+  }
+
+  @return if($min != 0, $min, null);
+}
+
+@function breakpoint-max($name, $breakpoints: $grid-breakpoints) {
+  $next: breakpoint-next($name, $breakpoints);
+
+  @return if($next, (breakpoint-min($next, $breakpoints) - $breakpoint-interval), null);
+}
+
+@function breakpoint-infix($name, $breakpoints: $grid-breakpoints) {
+  @return if(not breakpoint-min($name, $breakpoints), "", "-#{$name}");
+}
+
+// ---- Mixins ----
+
+// >= min-width
+@mixin media-breakpoint-up($name, $breakpoints: $grid-breakpoints) {
+  $min: breakpoint-min($name, $breakpoints);
+
+  @if $min {
+    @media (min-width: $min) { @content; }
+  } @else {
+    @content;
+  }
+}
+
+// <= (нижче $name), тобто до min($name) - ε
+// Приклад: sm=768 -> max-width: 767.98
+@mixin media-breakpoint-down($name, $breakpoints: $grid-breakpoints) {
+  $min: breakpoint-min($name, $breakpoints);
+
+  @if $min {
+    @media (max-width: ($min - $breakpoint-interval)) { @content; }
+  } @else {
+    @content;
+  }
+}
+
+// Діапазон [min(lower) .. max(upper)]
+@mixin media-breakpoint-between($lower, $upper, $breakpoints: $grid-breakpoints) {
+  $min: breakpoint-min($lower, $breakpoints);
+  $max: breakpoint-max($upper, $breakpoints);
+
+  @if $min and $max {
+    @media (min-width: $min) and (max-width: $max) { @content; }
+  } @else if not $max {
+    @include media-breakpoint-up($lower, $breakpoints) { @content; }
+  } @else if not $min {
+    @include media-breakpoint-down($upper, $breakpoints) { @content; }
+  }
+}
+
+// Тільки в межах одного брейкпоінта (еквівалент between($name, $name))
+@mixin media-breakpoint-only($name, $breakpoints: $grid-breakpoints) {
+  @include media-breakpoint-between($name, $name, $breakpoints) { @content; }
+}
+
+// Приклади очікуваної семантики:
+// @include media-breakpoint-down(sm) { /* 0 .. 767.98 */ }
+// @include media-breakpoint-up(sm)   { /* 768 .. ∞ */ }
+// @include media-breakpoint-between(sm, md) { /* 768 .. 1279.98 (за md=1024, lg=1280) */ }

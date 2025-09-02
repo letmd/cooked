@@ -1,0 +1,20 @@
+@use '../utils/variables' as *;
+
+@mixin font-face($font-family, $file-path, $weight: normal, $style: normal ) {
+  @font-face {
+    font-family: $font-family;
+    font-style: $style;
+    font-weight: $weight;
+    src: url('#{$file-path}.woff2') format('woff2');
+    font-display: swap;
+
+    //font-display: block;
+  }
+}
+
+// Inter
+@include font-face($font-family-inter-name, "#{$fonts-path}/#{$font-family-inter-name}/#{$font-family-inter-name}-Light", 300, normal);
+@include font-face($font-family-inter-name, "#{$fonts-path}/#{$font-family-inter-name}/#{$font-family-inter-name}-Regular", 400, normal);
+@include font-face($font-family-inter-name, "#{$fonts-path}/#{$font-family-inter-name}/#{$font-family-inter-name}-Medium", 500, normal);
+@include font-face($font-family-inter-name, "#{$fonts-path}/#{$font-family-inter-name}/#{$font-family-inter-name}-SemiBold", 600, normal);
+@include font-face($font-family-inter-name, "#{$fonts-path}/#{$font-family-inter-name}/#{$font-family-inter-name}-Bold", 700, normal);

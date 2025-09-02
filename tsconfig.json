@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "Bundler", // Резолюція модулів під бандлери (Vite) з коректною ESM-логікою
+    "module": "ESNext",            // Генерація ESM-імпортів/експортів; сучасні таргети для бандлера
+    "target": "ES2022",            // Рівень JS для емісії типів/перевірок (не для бандлу) — сучасні можливості
+    "lib": ["ES2022", "DOM", "DOM.Iterable"], // Набори вбудованих типів: сучасний JS + браузерні API + ітератори
+    "jsx": "preserve",             // Не трансформувати JSX (Vite/Nuxt сам обробить), актуально для Vue JSX/TSX
+    "resolveJsonModule": true,     // Дозволяє імпортувати .json як модулі з типами
+    "isolatedModules": true,       // Сумісність із пофайловою трансформацією (Vite/ESBuild); запобігає прихованим залежностям
+    "verbatimModuleSyntax": true,  // Зберігає імпорт/експорт як є; краща сумісність з ESM/Tree-shaking
+    "strict": true,                // Увімкнути весь строгий набір перевірок TypeScript
+    "noUncheckedIndexedAccess": true, // Індексні доступи повертають тип | undefined — ловить помилки доступу за індексом
+    "exactOptionalPropertyTypes": true, // Розрізняє відсутність властивості й значення undefined для optional-полів
+    "noImplicitOverride": true,    // Вимагає ключове слово override при перевизначенні методів — безпечніше ООП
+    "noPropertyAccessFromIndexSignature": true, // Забороняє доступ до властивостей, яких немає в типі (крім індекс-сигнатур)
+    "noFallthroughCasesInSwitch": true, // Заборона неявного “провалювання” між case у switch без break/return
+    "skipLibCheck": true,          // Прискорює перевірку: не перевіряє типи всередині node_modules
+    "types": ["node", "vite/client"] // Додає глобальні типи Node.js і Vite (HMR, імпорти ресурсів тощо)
+  },
+  "files": [], // Порожній масив — використовувати include/exclude Nuxt’ом через референси .nuxt/*
+  "references": [
+    {
+      "path": "./.nuxt/tsconfig.app.json" // Типи/шляхи для клієнтської частини Nuxt
+    },
+    {
+      "path": "./.nuxt/tsconfig.server.json" // Типи/шляхи для серверної частини Nuxt (Nitro)
+    },
+    {
+      "path": "./.nuxt/tsconfig.shared.json" // Спільні декларації між клієнтом і сервером
+    },
+    {
+      "path": "./.nuxt/tsconfig.node.json" // Конфіг для Node-коду, який виконується під час білду/скриптів
+    }
+  ]
+}

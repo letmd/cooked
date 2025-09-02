@@ -1,0 +1,21 @@
+@use "../utils/variables" as *;
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: $font-family-inter;
+  background-color: rgba($color-black, 0.05);
+}
+
+/* stylelint-disable-next-line selector-id-pattern */
+#__nuxt {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+#app {
+  position: relative;
+  flex-grow: 1;
+}
+
